@@ -97,13 +97,13 @@ public class JolietteCTJMBusAgencyTools extends DefaultAgencyTools {
 		if ("1".equals(gRoute.route_short_name)) return "D69732";
 		if ("3".equals(gRoute.route_short_name)) return "1263B0";
 		if ("4".equals(gRoute.route_short_name)) return "C61D23";
-		return null;
+		return super.getRouteColor(gRoute);
 	}
 
 	@Override
 	public void setTripHeadsign(MRoute route, MTrip mTrip, GTrip gTrip) {
 		String stationName = cleanTripHeadsign(gTrip.trip_headsign);
-		int directionId = Integer.valueOf(gTrip.direction_id);
+		int directionId = gTrip.direction_id;
 		mTrip.setHeadsignString(stationName, directionId);
 	}
 
