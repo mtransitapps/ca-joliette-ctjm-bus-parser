@@ -93,11 +93,19 @@ public class JolietteCTJMBusAgencyTools extends DefaultAgencyTools {
 		return AGENCY_COLOR;
 	}
 
+	private static final String COLOR_C61D23 = "C61D23";
+	private static final String COLOR_1263B0 = "1263B0";
+	private static final String COLOR_D69732 = "D69732";
+
+	private static final String RSN_1 = "1";
+	private static final String RSN_3 = "3";
+	private static final String RSN_4 = "4";
+
 	@Override
 	public String getRouteColor(GRoute gRoute) {
-		if ("1".equals(gRoute.route_short_name)) return "D69732";
-		if ("3".equals(gRoute.route_short_name)) return "1263B0";
-		if ("4".equals(gRoute.route_short_name)) return "C61D23";
+		if (RSN_1.equals(gRoute.route_short_name)) return COLOR_D69732;
+		if (RSN_3.equals(gRoute.route_short_name)) return COLOR_1263B0;
+		if (RSN_4.equals(gRoute.route_short_name)) return COLOR_C61D23;
 		return super.getRouteColor(gRoute);
 	}
 
@@ -142,15 +150,25 @@ public class JolietteCTJMBusAgencyTools extends DefaultAgencyTools {
 		return super.cleanStopNameFR(gStopName);
 	}
 
+	private static final String ZERO = "0";
+
 	@Override
 	public String getStopCode(GStop gStop) {
-		if ("0".equals(gStop.stop_code)) {
+		if (ZERO.equals(gStop.stop_code)) {
 			return null;
 		}
 		return super.getStopCode(gStop);
 	}
 
 	private static final Pattern DIGITS = Pattern.compile("[\\d]+");
+
+	private static final String RDP = "RDP";
+	private static final String SFV = "SFV";
+	private static final String SMS = "SMS";
+
+	private static final String A = "A";
+	private static final String B = "B";
+	private static final String D = "D";
 
 	@Override
 	public int getStopId(GStop gStop) {
@@ -162,22 +180,22 @@ public class JolietteCTJMBusAgencyTools extends DefaultAgencyTools {
 		matcher.find();
 		int digits = Integer.parseInt(matcher.group());
 		int stopId;
-		if (gStop.stop_id.startsWith("RDP")) {
+		if (gStop.stop_id.startsWith(RDP)) {
 			stopId = 100000;
-		} else if (gStop.stop_id.startsWith("SFV")) {
+		} else if (gStop.stop_id.startsWith(SFV)) {
 			stopId = 200000;
-		} else if (gStop.stop_id.startsWith("SMS")) {
+		} else if (gStop.stop_id.startsWith(SMS)) {
 			stopId = 300000;
 		} else {
 			System.out.println("Stop doesn't have an ID (start with)! " + gStop);
 			System.exit(-1);
 			stopId = -1;
 		}
-		if (gStop.stop_id.endsWith("A")) {
+		if (gStop.stop_id.endsWith(A)) {
 			stopId += 1000;
-		} else if (gStop.stop_id.endsWith("B")) {
+		} else if (gStop.stop_id.endsWith(B)) {
 			stopId += 2000;
-		} else if (gStop.stop_id.endsWith("D")) {
+		} else if (gStop.stop_id.endsWith(D)) {
 			stopId += 4000;
 		} else {
 			System.out.println("Stop doesn't have an ID (end with)! " + gStop);
