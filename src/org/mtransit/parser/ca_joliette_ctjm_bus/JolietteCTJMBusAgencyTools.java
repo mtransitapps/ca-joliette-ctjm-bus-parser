@@ -43,6 +43,11 @@ public class JolietteCTJMBusAgencyTools extends DefaultAgencyTools {
 	}
 
 	@Override
+	public boolean excludingAll() {
+		return this.serviceIds != null && this.serviceIds.isEmpty();
+	}
+
+	@Override
 	public boolean excludeCalendar(GCalendar gCalendar) {
 		if (this.serviceIds != null) {
 			return excludeUselessCalendar(gCalendar, this.serviceIds);
@@ -127,6 +132,13 @@ public class JolietteCTJMBusAgencyTools extends DefaultAgencyTools {
 		return CleanUtils.cleanLabelFR(tripHeadsign);
 	}
 
+	@Override
+	public boolean mergeHeadsign(MTrip mTrip, MTrip mTripToMerge) {
+		System.out.printf("\nUnepected trips to merge %s & %s\n", mTrip, mTripToMerge);
+		System.exit(-1);
+		return false;
+	}
+
 	private static final Pattern START_WITH_FACE_A = Pattern.compile("^(face à )", Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE);
 	private static final Pattern START_WITH_FACE_AU = Pattern.compile("^(face au )", Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE);
 	private static final Pattern START_WITH_FACE = Pattern.compile("^(face )", Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE);
@@ -177,30 +189,34 @@ public class JolietteCTJMBusAgencyTools extends DefaultAgencyTools {
 			return Integer.valueOf(stopCode); // using stop code as stop ID
 		}
 		Matcher matcher = DIGITS.matcher(gStop.getStopId());
-		matcher.find();
-		int digits = Integer.parseInt(matcher.group());
-		int stopId;
-		if (gStop.getStopId().startsWith(RDP)) {
-			stopId = 100000;
-		} else if (gStop.getStopId().startsWith(SFV)) {
-			stopId = 200000;
-		} else if (gStop.getStopId().startsWith(SMS)) {
-			stopId = 300000;
-		} else {
-			System.out.println("Stop doesn't have an ID (start with)! " + gStop);
-			System.exit(-1);
-			stopId = -1;
+		if (matcher.find()) {
+			int digits = Integer.parseInt(matcher.group());
+			int stopId;
+			if (gStop.getStopId().startsWith(RDP)) {
+				stopId = 100000;
+			} else if (gStop.getStopId().startsWith(SFV)) {
+				stopId = 200000;
+			} else if (gStop.getStopId().startsWith(SMS)) {
+				stopId = 300000;
+			} else {
+				System.out.println("Stop doesn't have an ID (start with)! " + gStop);
+				System.exit(-1);
+				stopId = -1;
+			}
+			if (gStop.getStopId().endsWith(A)) {
+				stopId += 1000;
+			} else if (gStop.getStopId().endsWith(B)) {
+				stopId += 2000;
+			} else if (gStop.getStopId().endsWith(D)) {
+				stopId += 4000;
+			} else {
+				System.out.println("Stop doesn't have an ID (end with)! " + gStop);
+				System.exit(-1);
+			}
+			return stopId + digits;
 		}
-		if (gStop.getStopId().endsWith(A)) {
-			stopId += 1000;
-		} else if (gStop.getStopId().endsWith(B)) {
-			stopId += 2000;
-		} else if (gStop.getStopId().endsWith(D)) {
-			stopId += 4000;
-		} else {
-			System.out.println("Stop doesn't have an ID (end with)! " + gStop);
-			System.exit(-1);
-		}
-		return stopId + digits;
+		System.out.printf("\nUnexpected stop ID for %s!\n", gStop);
+		System.exit(-1);
+		return -1;
 	}
 }
