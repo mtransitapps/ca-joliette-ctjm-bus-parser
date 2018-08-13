@@ -73,6 +73,9 @@ public class JolietteCTJMBusAgencyTools extends DefaultAgencyTools {
 
 	@Override
 	public boolean excludeRoute(GRoute gRoute) {
+		if (!"CRTL".equals(gRoute.getAgencyId())) {
+			return true; // exclude wrong agency
+		}
 		if (gRoute.getRouteId().length() > 1) {
 			return true; // exclude CRTL Lanaudière Bus
 		}
@@ -129,6 +132,7 @@ public class JolietteCTJMBusAgencyTools extends DefaultAgencyTools {
 	public String cleanTripHeadsign(String tripHeadsign) {
 		tripHeadsign = DIRECTION.matcher(tripHeadsign).replaceAll(DIRECTION_REPLACEMENT);
 		tripHeadsign = SECTEUR.matcher(tripHeadsign).replaceAll(SECTEUR_REPLACEMENT);
+		tripHeadsign = CleanUtils.cleanStreetTypesFRCA(tripHeadsign);
 		return CleanUtils.cleanLabelFR(tripHeadsign);
 	}
 
